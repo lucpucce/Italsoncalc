@@ -1,542 +1,336 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Demolab Italia | Simulatore Demografico Scientifico</title>
-    <!-- Bootstrap 5 + Icons + Font -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap');
-        
-        * {
-            font-family: 'Inter', sans-serif;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: linear-gradient(145deg, #f0f4f8 0%, #e2e8f0 100%);
-            padding: 1.25rem;
-            min-height: 100vh;
-            color: #1e293b;
-        }
-        
-        .glass-card {
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 1.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .glass-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08);
-        }
-        
-        .gradient-header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            border-radius: 1.5rem;
-            padding: 1.5rem;
-            margin-bottom: 1.8rem;
-            color: white;
-            box-shadow: 0 10px 20px -10px rgba(0,0,0,0.15);
-        }
-        
-        .badge-fert {
-            background: #e2e8f0;
-            color: #334155;
-            font-weight: 600;
-            padding: 0.4rem 1rem;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            border: 1px solid #cbd5e1;
-        }
-        
-        .result-glow {
-            background: linear-gradient(120deg, #1e293b, #0f172a);
-            border-radius: 1.5rem;
-            padding: 1.8rem;
-            color: white;
-            border-left: 5px solid #3b82f6;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .big-number {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #60a5fa, #2563eb);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            line-height: 1.1;
-        }
-        
-        .control-label {
-            font-weight: 600;
-            color: #334155;
-            font-size: 0.85rem;
-            letter-spacing: -0.1px;
-        }
-        
-        .form-range {
-            height: 6px;
-        }
-        
-        .card-inner {
-            padding: 1.25rem;
-        }
-        
-        .btn-action {
-            background: linear-gradient(100deg, #2563eb, #1d4ed8);
-            border: none;
-            font-weight: 700;
-            padding: 0.75rem 1.2rem;
-            border-radius: 2rem;
-            transition: all 0.2s;
-            color: white;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        }
-        
-        .btn-action:hover {
-            transform: scale(0.98);
-            background: linear-gradient(100deg, #1d4ed8, #1e40af);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
-        }
-        
-        footer {
-            font-size: 0.75rem;
-            text-align: center;
-            color: #64748b;
-            margin-top: 2.5rem;
-            padding-bottom: 1rem;
-        }
-        
-        .chart-container {
-            background: white;
-            border-radius: 1rem;
-            padding: 0.75rem;
-            margin-top: 0.5rem;
-            border: 1px solid #f1f5f9;
-        }
-        
-        select.form-select {
-            border-radius: 2rem;
-            font-weight: 500;
-            border: 1px solid #cbd5e1;
-            padding: 0.5rem 1.25rem;
-        }
-        
-        .info-box {
-            background-color: #f8fafc;
-            border-left: 4px solid #64748b;
-            border-radius: 0.375rem;
-            padding: 0.75rem;
-            font-size: 0.85rem;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demolab Italia | Simulatore demografico corretto</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    :root{
+      --ink:#0f172a;--muted:#64748b;--card:#ffffff;--line:#e2e8f0;--soft:#f8fafc;
+      --blue:#2563eb;--green:#059669;--amber:#d97706;--red:#dc2626;--violet:#7c3aed;
+    }
+    *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+    body{background:linear-gradient(145deg,#eef4fb 0%,#e5e7eb 100%);color:var(--ink);padding:1.2rem;min-height:100vh}
+    .shell{max-width:1320px;margin:0 auto}
+    .hero{background:linear-gradient(135deg,#0f172a,#1e293b);color:white;border-radius:1.4rem;padding:1.35rem 1.5rem;box-shadow:0 18px 35px rgba(15,23,42,.16)}
+    .hero h1{font-weight:800;letter-spacing:-.03em;margin:0}
+    .hero p{margin:.35rem 0 0;color:#cbd5e1}
+    .badge-soft{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.45rem .8rem;color:#e2e8f0;font-size:.78rem;font-weight:700}
+    .cardx{background:rgba(255,255,255,.98);border:1px solid rgba(226,232,240,.95);border-radius:1.25rem;box-shadow:0 14px 28px rgba(15,23,42,.07);height:100%}
+    .cardx .inner{padding:1.1rem}
+    .section-title{font-weight:800;font-size:.98rem;margin-bottom:1rem;letter-spacing:-.02em}
+    .control-label{font-size:.82rem;color:#334155;font-weight:700;margin-bottom:.25rem}
+    .form-range{height:.45rem}
+    .small-note{font-size:.76rem;color:var(--muted);line-height:1.35}
+    .result-card{background:linear-gradient(135deg,#111827,#0f172a);color:white;border-radius:1.25rem;padding:1.2rem;height:100%;box-shadow:0 18px 35px rgba(15,23,42,.18);border-left:6px solid var(--blue)}
+    .metric-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:#cbd5e1;font-weight:800}
+    .big{font-size:3.2rem;font-weight:800;line-height:1;background:linear-gradient(135deg,#93c5fd,#2563eb);-webkit-background-clip:text;background-clip:text;color:transparent;margin:.45rem 0}
+    .pill{display:inline-flex;align-items:center;gap:.35rem;border-radius:999px;padding:.35rem .65rem;font-size:.76rem;font-weight:800;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0}
+    .formula{background:#f8fafc;border:1px solid #e2e8f0;border-radius:.9rem;padding:.75rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;color:#1e293b;line-height:1.45}
+    .chartbox{height:260px;background:white;border:1px solid #edf2f7;border-radius:1rem;padding:.65rem}
+    .warn{background:#fff7ed;border-left:4px solid var(--amber);border-radius:.75rem;padding:.75rem;color:#7c2d12;font-size:.82rem;line-height:1.42}
+    .ok{background:#ecfdf5;border-left:4px solid var(--green);border-radius:.75rem;padding:.75rem;color:#064e3b;font-size:.82rem;line-height:1.42}
+    table{font-size:.82rem}.table thead th{font-size:.72rem;text-transform:uppercase;color:#64748b;letter-spacing:.04em}
+    footer{font-size:.75rem;color:#64748b;text-align:center;margin:2rem 0 .5rem;line-height:1.45}
+    .model-toggle{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:1rem;padding:.45rem;margin-bottom:.85rem}
+    .model-toggle .btn{border-radius:.75rem;font-weight:800;font-size:.76rem;color:#cbd5e1;border:0}
+    .model-toggle .btn-check:checked + .btn{background:#2563eb;color:#fff;box-shadow:0 8px 18px rgba(37,99,235,.28)}
+    .result-submetric{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:.85rem;padding:.65rem;margin-top:.65rem}
+    .result-submetric .k{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:#cbd5e1;font-weight:800}
+    .result-submetric .v{font-weight:800;font-size:1.05rem}
+  </style>
 </head>
 <body>
+<div class="shell">
+  <div class="hero mb-4 d-flex align-items-center justify-content-between gap-3 flex-wrap">
+    <div>
+      <h1><i class="bi bi-activity text-primary me-2"></i>Demolab Italia</h1>
+      <p>Simulatore demografico base: saldo naturale annuo, TFR periodale, rimpiazzo generazionale NRR.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <span class="badge-soft"><i class="bi bi-check2-circle text-success me-1"></i> Ver 1.0”</span>
+      <span class="badge-soft"><i class="bi bi-database-check text-info me-1"></i> Base ISTAT 2023</span>
+    </div>
+  </div>
 
-<div class="container-lg px-2">
-    <!-- HEADER -->
-    <div class="gradient-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <div>
-            <h1 class="h2 fw-bold mb-1"><i class="bi bi-activity me-2 text-primary"></i>Demolab Italia v2.0</h1>
-            <p class="mb-0 opacity-75 small">Modellazione scientifica della stabilità demografica e rimpiazzo generazionale (Dati ISTAT 2023)</p>
-        </div>
-        <div>
-            <span class="badge-fert"><i class="bi bi-shield-check text-success me-1"></i> Corretto concettualmente</span>
-        </div>
+  <div class="row g-4 mb-4">
+    <div class="col-lg-4 col-md-6">
+      <div class="cardx"><div class="inner">
+        <div class="section-title"><i class="bi bi-people-fill text-primary me-2"></i>Dati osservati Italia</div>
+        <label class="control-label">Nati vivi annui osservati: <span id="birthsLabel" class="float-end text-primary">379.890</span></label>
+        <input type="range" class="form-range mb-3" id="births" min="300000" max="500000" step="100" value="379890">
+        <label class="control-label">Decessi annui osservati: <span id="deathsLabel" class="float-end text-danger">661.000</span></label>
+        <input type="range" class="form-range mb-3" id="deaths" min="500000" max="850000" step="100" value="661000">
+        <label class="control-label">TFR/TFT osservato: <span id="tfrLabel" class="float-end text-success">1,20</span></label>
+        <input type="range" class="form-range mb-3" id="tfr" min="0.80" max="2.60" step="0.01" value="1.20">
+        <div class="ok"><strong>Modello 1.</strong> Il TFR per saldo naturale zero usa dati osservati: TFR × decessi / nati. È un modello statico annuale, non un modello generazionale.</div>
+      </div></div>
     </div>
 
-    <!-- MAIN CONTROL ROW -->
-    <div class="row g-4 mb-4">
-        <!-- Controls: Demographics -->
-        <div class="col-md-6 col-lg-4">
-            <div class="glass-card h-100">
-                <div class="card-inner">
-                    <h6 class="fw-bold mb-3 text-dark"><i class="bi bi-people-fill me-2 text-primary"></i>Struttura della Popolazione</h6>
-                    
-                    <label class="control-label mt-1">👩 Donne Totali (15-49 anni): <span id="womenLabel" class="float-end fw-bold text-primary">11.58</span> M</label>
-                    <input type="range" class="form-range mb-3" id="womenSlider" min="9.0" max="14.0" step="0.05" value="11.58">
-                    
-                    <div class="info-box mb-3">
-                        <i class="bi bi-info-circle-fill me-1 text-slate"></i> 
-                        <strong>Distribuzione Reale ISTAT 2023:</strong> In Italia le donne più anziane superano nettamente le giovani (15-24 anni: 25%, 35-49 anni: 52%). Il simulatore mappa questa asimmetria reale.
-                    </div>
-                    
-                    <label class="control-label">⚰️ Decessi Totali Annui (2023): <span id="deathsLabel" class="float-end fw-bold text-danger">660.6</span> k</label>
-                    <input type="range" class="form-range mb-2" id="deathsSlider" min="500" max="850" step="1" value="660.6">
-                </div>
-            </div>
-        </div>
-        
-        <!-- Controls: Fertility & Biology -->
-        <div class="col-md-6 col-lg-4">
-            <div class="glass-card h-100">
-                <div class="card-inner">
-                    <h6 class="fw-bold mb-3 text-dark"><i class="bi bi-egg-fried me-2 text-warning"></i>Biologia & Estensione Fertilità</h6>
-                    
-                    <label class="control-label">⏳ Estensione Età Fertile Massima: <span id="maxAgeLabel" class="float-end fw-bold text-warning">49</span> anni</label>
-                    <input type="range" class="form-range mb-1" id="maxAgeSlider" min="45" max="55" step="1" value="49">
-                    <small class="text-muted d-block mb-3" style="font-size:0.75rem;">
-                        Innalzando l'età, la fertilità decade biologicamente secondo letteratura medica (~18% annuo dopo i 45 anni).
-                    </small>
+    <div class="col-lg-4 col-md-6">
+      <div class="cardx"><div class="inner">
+        <div class="section-title"><i class="bi bi-bar-chart-steps text-success me-2"></i>Struttura donne 15–49</div>
+        <label class="control-label">Donne 15–49 anni: <span id="womenLabel" class="float-end text-primary">11,58 M</span></label>
+        <input type="range" class="form-range mb-3" id="women" min="9.0" max="14.0" step="0.01" value="11.58">
+        <label class="control-label">Scala scenario fecondità: <span id="scenarioTfrLabel" class="float-end text-violet">1,20</span></label>
+        <input type="range" class="form-range mb-3" id="scenarioTfr" min="0.80" max="3.20" step="0.01" value="1.20">
+        <div class="warn"><strong>Nota.</strong> Le classi 15–49 restano lo standard del TFT. L’estensione 50–55 è stata rimossa: senza dati reali per età e fecondità ultra-49 introdurrebbe un artefatto.</div>
+      </div></div>
+    </div>
 
-                    <label class="control-label">👶 TFR Attuale di Riferimento: <span id="tfrCurrLabel" class="float-end fw-bold">1.20</span> figli/donna</label>
-                    <input type="range" class="form-range mb-3" id="tfrSlider" min="0.8" max="2.5" step="0.02" value="1.20">
-                    
-                    <label class="control-label mb-1">🧠 Modello Demografico Validato</label>
-                    <select class="form-select" id="modelSelect">
-                        <option value="deterministic">📐 Componenti di Coorte (Distribuzione ISTAT)</option>
-                        <option value="leslie">🧬 Matrice di Leslie Singoli Anni (Equilibrio Lungo Periodo)</option>
-                        <option value="montecarlo">🎲 Monte Carlo Stocastico (Incertezza Tassi 50k run)</option>
-                    </select>
-                    
-                    <div class="mt-3 d-grid">
-                        <button id="runBtn" class="btn-action"><i class="bi bi-cpu-fill me-2"></i>Esegui Simulazione</button>
-                    </div>
-                </div>
-            </div>
+    <div class="col-lg-4">
+      <div class="result-card">
+        <div class="metric-label mb-2">Scegli il modello da visualizzare</div>
+        <div class="model-toggle btn-group w-100" role="group" aria-label="Selezione modello demografico">
+          <input type="radio" class="btn-check" name="modelMode" id="modeBalance" value="balance" autocomplete="off" checked>
+          <label class="btn" for="modeBalance">Saldo annuo</label>
+
+          <input type="radio" class="btn-check" name="modelMode" id="modeReplacement" value="replacement" autocomplete="off">
+          <label class="btn" for="modeReplacement">NRR=1</label>
+
+          <input type="radio" class="btn-check" name="modelMode" id="modeSensitivity" value="sensitivity" autocomplete="off">
+          <label class="btn" for="modeSensitivity">Sensibilità</label>
         </div>
-        
-        <!-- Results Card -->
-        <div class="col-lg-4">
-            <div class="result-glow h-100">
-                <div class="small text-uppercase tracking-wider opacity-75 fw-bold"><i class="bi bi-check-circle-fill me-1 text-info"></i> TFR di Equilibrio Stimato</div>
-                <div class="big-number my-2" id="requiredTfrDisplay">--.--</div>
-                <div class="small fw-semibold text-info" id="modelTypeInfo">Seleziona un modello concettuale</div>
-                <hr class="my-2 opacity-25" style="border-color: white;">
-                <div class="small opacity-90" id="confidenceInfo" style="font-size: 0.85rem; line-height: 1.4;">--</div>
-                <div class="mt-2 p-2 bg-white bg-opacity-10 rounded text-warning" id="deltaInfo" style="font-size: 0.82rem; font-weight: 600;"></div>
-            </div>
+
+        <div class="metric-label" id="mainMetricLabel">TFR necessario per saldo naturale zero</div>
+        <div class="big" id="mainMetricValue">--</div>
+        <div class="small" id="mainMetricText">--</div>
+
+        <div class="result-submetric">
+          <div class="k">Saldo naturale annuo</div>
+          <div class="v" id="balanceTfr">--</div>
+          <div class="small opacity-75" id="balanceText">--</div>
         </div>
+        <div class="result-submetric">
+          <div class="k">Rimpiazzo generazionale NRR=1</div>
+          <div class="v" id="replacementTfr">--</div>
+          <div class="small text-info opacity-90" id="replacementText">--</div>
+        </div>
+      </div>
     </div>
-    
-    <!-- CHARTS ROW -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-6">
-            <div class="glass-card">
-                <div class="card-inner">
-                    <h6 class="fw-bold mb-1 text-dark"><i class="bi bi-graph-bar me-2 text-danger"></i>Curva di Fertilità Specifica (ASFR ISTAT + Decadimento)</h6>
-                    <p class="text-muted small mb-2">Numero medio di figli nati per donna a ciascuna specifica età biologica.</p>
-                    <div class="chart-container">
-                        <canvas id="asfrCanvas" height="180" style="max-height: 220px; width: 100%;"></canvas>
-                    </div>
-                </div>
-            </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-lg-7">
+      <div class="cardx"><div class="inner">
+        <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap mb-2">
+          <div>
+            <div class="section-title mb-1"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Tassi specifici di fecondità per classe d’età</div>
+            <div class="small-note">Valori annui per 1.000 donne, classi quinquennali. La somma quinquennale produce TFT ≈ 1,20.</div>
+          </div>
+          <span class="pill"><i class="bi bi-calculator"></i> TFT da ASFR: <span id="asfrTfrPill">--</span></span>
         </div>
-        <div class="col-md-6">
-            <div class="glass-card">
-                <div class="card-inner">
-                    <h6 class="fw-bold mb-1 text-dark"><i class="bi bi-pie-chart-fill me-2 text-success"></i>Effetto Struttura: Donne Reali vs Uniformi</h6>
-                    <p class="text-muted small mb-2">Confronto tra la reale contrazione delle coorti giovani ISTAT e l'assunzione uniforme errata.</p>
-                    <div class="chart-container">
-                        <canvas id="structureCanvas" height="180" style="max-height: 220px; width: 100%;"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="chartbox"><canvas id="asfrChart"></canvas></div>
+      </div></div>
     </div>
-    
-    <!-- METODOLOGIA E NOTE SCIENTIFICHE -->
-    <div class="glass-card p-4">
-        <h6 class="fw-bold border-bottom pb-2 mb-3"><i class="bi bi-journal-bookmark-fill me-2 text-primary"></i>Note Metodologiche e Correzioni Scientifiche</h6>
-        <div class="row g-3 style-text small">
-            <div class="col-md-6">
-                <p><strong>1. Correzione del Paradosso dell'Età Fertile:</strong> Nel vecchio modello, estendendo l'età fertile a 55 anni il TFR necessario aumentava in modo errato perché la popolazione femminile veniva "spalmata" uniformemente su più anni. In questa versione, la distribuzione per età ricalca fedelmente la piramide demografica dell'ISTAT. L'estensione oltre i 49 anni aggiunge nuove nascite microscopiche regolate dal decadimento biologico della fecondità ($\sim e^{-0.22 \cdot \Delta}$), facendo muovere il TFR richiesto in modo coerente e realistico.</p>
-                <p><strong>2. Distribuzione Asimmetrica ISTAT 2023:</strong> In Italia non vi è un numero uguale di donne per ogni età. Le donne tra i 40 e i 49 anni (coorti più numerose nate negli anni '70) sono quasi il doppio rispetto alle giovani tra i 15 e i 24 anni. Il simulatore applica i pesi reali per coorte ad ogni singolo anno di età.</p>
-            </div>
-            <div class="col-md-6">
-                <p><strong>3. Spiegazione dei Modelli Implementati:</strong></p>
-                <ul>
-                    <li><strong>Componenti di Coorte:</strong> Risolve il bilancio demografico istantaneo calcolando esattamente quante nascite produrrebbe la vera struttura delle donne italiane modificando il TFR in modo proporzionale, fino a pareggiare i decessi annuali indicati.</li>
-                    <li><strong>Vera Matrice di Leslie:</strong> Costruisce matematicamente una matrice di transizione di Leslie in cui si tiene conto della sopravvivenza ed esegue il calcolo dell'autovalore dominante $\lambda=1$. Trova il tasso intrinseco di rimpiazzo di lungo periodo affinché la struttura di popolazione si stabilizzi in modo stazionario (strutturalmente vicino a 2.1).</li>
-                    <li><strong>Monte Carlo Stocastico:</strong> Simula 50.000 perturbazioni campionando i tassi ASFR e la mortalità da distribuzioni Gaussiane per isolare gli intervalli di confidenza probabilistici (IC 95%).</li>
-                </ul>
-            </div>
-        </div>
+    <div class="col-lg-5">
+      <div class="cardx"><div class="inner">
+        <div class="section-title"><i class="bi bi-pie-chart-fill text-success me-2"></i>Nascite attese per classe d’età</div>
+        <div class="chartbox"><canvas id="birthsChart"></canvas></div>
+      </div></div>
     </div>
-    <footer>Fonte dati: ISTAT 2023 (Rilevazione della dinamica demografica). Elaborazione curve di fecondità basata sui modelli biologici di Wood e Coale-Trussell per il decadimento riproduttivo tardivo.</footer>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-lg-6">
+      <div class="cardx"><div class="inner">
+        <div class="section-title"><i class="bi bi-table text-primary me-2"></i>Tabella ASFR e contributi</div>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead><tr><th>Età</th><th>Donne stimate</th><th>ASFR / 1000</th><th>Nascite stimate</th><th>Quota TFT</th></tr></thead>
+            <tbody id="asfrTable"></tbody>
+          </table>
+        </div>
+      </div></div>
+    </div>
+    <div class="col-lg-6">
+      <div class="cardx"><div class="inner">
+        <div class="section-title"><i class="bi bi-journal-check text-violet me-2"></i>Formule usate</div>
+        <div class="formula mb-3">
+          TFT = Σ (ampiezza_classe × ASFR_classe)<br>
+          TFR_saldo0 = TFR_osservato × decessi / nati_osservati<br>
+          NRR = TFR × quota_femmine_alla_nascita × Σ(quota_fecondità_classe × sopravvivenza_media_classe)<br>
+          TFR_rimpiazzo = 1 / (quota_femmine × Σ(quota_fecondità × sopravvivenza))
+        </div>
+        <div class="small-note">
+          <strong>Cosa è stato corretto rispetto alla versione precedente:</strong><br>
+          1) eliminata la “vera matrice Leslie” fittizia; qui si usa esplicitamente NRR=1;<br>
+          2) eliminato il Monte Carlo pseudo-casuale non fondato;<br>
+          3) separati saldo naturale annuo e rimpiazzo generazionale;<br>
+          4) rimossa l’età fertile 50–55 dal modello principale;<br>
+          5) aggiunta tabella ASFR quinquennale modificabile nel codice.
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="cardx mb-4"><div class="inner">
+    <div class="section-title"><i class="bi bi-sliders2 text-warning me-2"></i>Analisi di sensibilità deterministica</div>
+    <div class="row g-3">
+      <div class="col-md-4"><div class="formula">Scenario basso<br><span id="lowScenario" class="fw-bold"></span></div></div>
+      <div class="col-md-4"><div class="formula">Scenario centrale<br><span id="midScenario" class="fw-bold"></span></div></div>
+      <div class="col-md-4"><div class="formula">Scenario alto<br><span id="highScenario" class="fw-bold"></span></div></div>
+    </div>
+    <p class="small-note mt-3 mb-0">Questa non è una simulazione probabilistica. È una sensibilità trasparente: variazione ±5% del rapporto decessi/nati osservati. </p>
+  </div></div>
+
+  <footer>
+    Fonti metodologiche: ISTAT, indicatori di natalità/fecondità 2023 e Demo ISTAT “Fecondità”; Eurostat, definizione di replacement level intorno a 2,1 nei paesi sviluppati in assenza di migrazione. I valori ASFR quinquennali sono impostati per riprodurre TFT ≈ 1,20 e vanno sostituiti con estrazione ufficiale a singola età quando disponibile.
+  </footer>
 </div>
 
 <script>
-    // --- DISTRIBUZIONE REALE PERCENTUALE DELLE DONNE ITALIANE 15-49 ANNI (ISTAT 2023) ---
-    // Mappa l'effettivo sbilanciamento generazionale italiano per classi quinquennali
-    const ISTAT_WEIGHTS_5YR = {
-        15: 0.121, // 15-19 anni
-        20: 0.126, // 20-24 anni
-        25: 0.132, // 25-29 anni
-        30: 0.141, // 30-34 anni
-        35: 0.151, // 35-39 anni
-        40: 0.163, // 40-44 anni
-        45: 0.166  // 45-49 anni
-    };
+/*
+  Demolab Italia - versione scientificamente corretta base
+  ---------------------------------------------------------
+  Questo file NON pretende di fare una proiezione completa della popolazione.
+  Implementa tre quantità distinte:
+  1. TFR osservato / periodale da ASFR;
+  2. TFR statico necessario a pareggiare il saldo naturale annuo;
+  3. TFR di rimpiazzo generazionale tramite NRR=1.
 
-    // Genera la curva reale dei pesi di popolazione per ogni singolo anno (15-49)
-    function getIstatWomenDistribution(totalWomen, maxAge) {
-        let distribution = {};
-        let sumWeights = 0;
-        
-        // Assegniamo i pesi reali fino a 49 anni
-        for (let a = 15; a <= 55; a++) {
-            if (a <= 49) {
-                let bin = Math.floor(a / 5) * 5;
-                distribution[a] = ISTAT_WEIGHTS_5YR[bin] / 5.0; // dividi nei 5 anni del bin
-            } else {
-                // Per le età estese oltre i 49 anni (fino a maxAge), assumiamo che seguano il trend di contrazione demografica 
-                distribution[a] = ISTAT_WEIGHTS_5YR[45] / 5.0 * Math.exp(-0.03 * (a - 49));
-            }
-            if (a <= maxAge) {
-                sumWeights += distribution[a];
-            }
-        }
-        
-        // Rinormalizza i pesi in modo che la somma delle età considerate sia esattamente pari a 1
-        let result = {};
-        for (let a = 15; a <= maxAge; a++) {
-            result[a] = (distribution[a] / sumWeights) * totalWomen;
-        }
-        return result;
-    }
+  Prossima estensione prevista:
+  - donne straniere per classe d'età;
+  - ASFR italiane/straniere separate;
+  - migrazione netta per sesso/età;
+  - coorte-component model multistato.
+*/
 
-    // --- CURVA ASFR BASE (ISTAT 2023) CON DECADIMENTO BIOLOGICO ---
-    // Valori medi reali ISTAT (figli per singola donna a quella specifica età)
-    const BASE_ASFR_VALUES = {
-        15: 0.0012, 20: 0.0150, 25: 0.0460, 30: 0.0820, 35: 0.0640, 40: 0.0210, 45: 0.0028
-    };
+const AGE_GROUPS = [
+  {label:'15–19', mid:17, width:5, womenShare:0.121, asfrPer1000:3.0, survivalToMeanAge:0.9955},
+  {label:'20–24', mid:22, width:5, womenShare:0.126, asfrPer1000:18.0, survivalToMeanAge:0.9950},
+  {label:'25–29', mid:27, width:5, womenShare:0.132, asfrPer1000:54.0, survivalToMeanAge:0.9944},
+  {label:'30–34', mid:32, width:5, womenShare:0.141, asfrPer1000:81.0, survivalToMeanAge:0.9936},
+  {label:'35–39', mid:37, width:5, womenShare:0.151, asfrPer1000:60.0, survivalToMeanAge:0.9925},
+  {label:'40–44', mid:42, width:5, womenShare:0.163, asfrPer1000:22.0, survivalToMeanAge:0.9910},
+  {label:'45–49', mid:47, width:5, womenShare:0.166, asfrPer1000:2.0, survivalToMeanAge:0.9890}
+];
 
-    function getASFRValue(age, maxAge) {
-        if (age > maxAge) return 0;
-        if (age <= 45) {
-            // Interpolazione lineare tra i punti pivot ISTAT per linearizzare la curva per singolo anno
-            let keys = [15, 20, 25, 30, 35, 40, 45];
-            for (let i = 0; i < keys.length - 1; i++) {
-                if (age >= keys[i] && age <= keys[i+1]) {
-                    let t = (age - keys[i]) / (keys[i+1] - keys[i]);
-                    return BASE_ASFR_VALUES[keys[i]] * (1 - t) + BASE_ASFR_VALUES[keys[i+1]] * t;
-                }
-            }
-            return BASE_ASFR_VALUES[15];
-        } else {
-            // Decadimento biologico dopo i 45 anni basato sulla letteratura medica (Wood, 1994)
-            // La fecondità decade esponenzialmente a causa dell'esaurimento della riserva ovarica.
-            let val45 = BASE_ASFR_VALUES[45];
-            let decay = Math.exp(-0.24 * (age - 45));
-            return val45 * decay;
-        }
-    }
+const SEX_RATIO_MALE_FEMALE = 1.05;
+const FEMALE_SHARE_AT_BIRTH = 1 / (1 + SEX_RATIO_MALE_FEMALE);
+let asfrChart = null;
+let birthsChart = null;
 
-    // Calcola il TFR nativo della curva integrando tutte le età fertili
-    function calculateIntegratedTFR(maxAge) {
-        let sum = 0;
-        for (let a = 15; a <= maxAge; a++) {
-            sum += getASFRValue(a, maxAge);
-        }
-        return sum;
-    }
+function fmtInt(x){ return Math.round(x).toLocaleString('it-IT'); }
+function fmtDec(x,d=2){ return x.toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d}); }
 
-    // --- ENGINES DEI MODELLI DEMOGRAFICI ---
+function observedTFRFromASFR(){
+  return AGE_GROUPS.reduce((s,g)=>s + g.width * (g.asfrPer1000 / 1000), 0);
+}
 
-    // 1. Modello Deterministico Strutturato su Componenti di Coorte
-    function runDeterministic(totalWomen, totalDeaths, maxAge) {
-        let womenAgeMap = getIstatWomenDistribution(totalWomen, maxAge);
-        let baseIntegratedTfr = calculateIntegratedTFR(maxAge);
-        
-        // Calcola quante nascite verrebbero prodotte se il TFR fosse esattamente pari a 1.0
-        let birthsAtUnitTfr = 0;
-        for (let a = 15; a <= maxAge; a++) {
-            let asfrNormalized = getASFRValue(a, maxAge) / baseIntegratedTfr;
-            birthsAtUnitTfr += womenAgeMap[a] * asfrNormalized;
-        }
-        
-        // Il TFR necessario ad azzerare il saldo naturale istantaneo è Morti / Nascite ad unità di TFR
-        let reqTfr = totalDeaths / birthsAtUnitTfr;
-        return Math.min(4.0, Math.max(0.5, reqTfr));
-    }
+function birthsByAgeGroup(totalWomen, targetTfr){
+  const baseTfr = observedTFRFromASFR();
+  const scale = targetTfr / baseTfr;
+  return AGE_GROUPS.map(g => {
+    const women = totalWomen * g.womenShare;
+    const asfr = (g.asfrPer1000 / 1000) * scale;
+    const births = women * asfr;
+    return {...g, women, asfr, births, scaledAsfrPer1000:g.asfrPer1000 * scale};
+  });
+}
 
-    // 2. Modello di Rimpiazzo di Lungo Periodo (Approssimazione analitica dell'Autovalore di Leslie)
-    function runLeslieReplacement(totalWomen, totalDeaths, maxAge) {
-        // La stabilità di lungo periodo (Tasso di Rimpiazzo Netto NRR = 1) stabilisce che una generazione 
-        // di madri deve generare esattamente 1 figlia femmina che sopravviva fino all'età fertile media.
-        const sexRatioAtBirth = 1.05; // 105 maschi ogni 100 femmine -> quota femmine = 1 / 2.05 = 0.488
-        const femaleQuota = 1 / (1 + sexRatioAtBirth);
-        const survivalToMeanAge = 0.991; // Sopravvivenza media femminile fino a 32 anni in Italia (Tavole ISTAT)
-        
-        // Il TFR classico teorico di rimpiazzo puro
-        let classicalReplacementTfr = 1.0 / (femaleQuota * survivalToMeanAge); // ~2.10
-        
-        // Adattamento del modello di stazionarietà alla presenza della struttura reale attuale
-        let detTfr = runDeterministic(totalWomen, totalDeaths, maxAge);
-        
-        // Il modello di stabilità converge nel lungo periodo al tasso di rimpiazzo biologico pura, 
-        // smorzando l'inerzia strutturale (Popolazione Stabile vs Stazionaria).
-        return (classicalReplacementTfr * 0.70 + detTfr * 0.30);
-    }
+function annualNaturalBalanceTFR(observedTfr, births, deaths){
+  return observedTfr * deaths / births;
+}
 
-    // 3. Simulazione Monte Carlo Stocastica (50.000 iterazioni)
-    function runMonteCarlo(totalWomen, totalDeaths, maxAge) {
-        let samples = [];
-        let iterations = 40000;
-        let detTfr = runDeterministic(totalWomen, totalDeaths, maxAge);
-        
-        for (let i = 0; i < iterations; i++) {
-            // Introduciamo incertezza stocastica Gaussiana Box-Muller sui parametri macro (Mortalità e Efficacia Fecondità per coorte)
-            let u1 = Math.random();
-            let u2 = Math.random();
-            let randStdNormal = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
-            
-            let noiseDeaths = totalDeaths * (1 + randStdNormal * 0.03); // Incertezza 3% deviazione standard sui decessi
-            let noiseStructure = 1 + (Math.random() - 0.5) * 0.02;     // Oscillazione della struttura
-            
-            let simulatedRequired = detTfr * (noiseDeaths / totalDeaths) * noiseStructure;
-            samples.push(simulatedRequired);
-        }
-        
-        samples.sort((a, b) => a - b);
-        return {
-            median: samples[Math.floor(iterations * 0.5)],
-            p2_5: samples[Math.floor(iterations * 0.025)],
-            p97_5: samples[Math.floor(iterations * 0.975)]
-        };
-    }
+function replacementTFR_NRR(){
+  const tfr = observedTFRFromASFR();
+  const weightedSurvival = AGE_GROUPS.reduce((s,g)=>{
+    const fertilityShare = (g.width * (g.asfrPer1000/1000)) / tfr;
+    return s + fertilityShare * g.survivalToMeanAge;
+  },0);
+  return 1 / (FEMALE_SHARE_AT_BIRTH * weightedSurvival);
+}
 
-    // --- UI GRAPHICS LOGIC ---
-    let asfrChart = null;
-    let structureChart = null;
+function selectedModelMode(){
+  return document.querySelector('input[name="modelMode"]:checked')?.value || 'balance';
+}
 
-    function drawCharts(totalWomen, maxAge) {
-        // Grafico 1: ASFR Curve
-        let ages = [];
-        let asfrValues = [];
-        for (let a = 15; a <= Math.max(55, maxAge); a++) {
-            ages.push(a);
-            asfrValues.push(getASFRValue(a, maxAge));
-        }
+function update(){
+  const birthsObserved = parseFloat(document.getElementById('births').value);
+  const deathsObserved = parseFloat(document.getElementById('deaths').value);
+  const tfrObserved = parseFloat(document.getElementById('tfr').value);
+  const women = parseFloat(document.getElementById('women').value) * 1e6;
+  const scenarioTfr = parseFloat(document.getElementById('scenarioTfr').value);
 
-        if (asfrChart) asfrChart.destroy();
-        let ctx1 = document.getElementById('asfrCanvas').getContext('2d');
-        asfrChart = new Chart(ctx1, {
-            type: 'line',
-            data: {
-                labels: ages,
-                datasets: [{
-                    label: 'Tasso Specifico di Fecondità (ASFR)',
-                    data: asfrValues,
-                    borderColor: '#2563eb',
-                    backgroundColor: 'rgba(37, 99, 235, 0.08)',
-                    fill: true,
-                    tension: 0.3,
-                    borderWidth: 2,
-                    pointRadius: (context) => context.dataIndex % 5 === 0 ? 3 : 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { title: { display: true, text: 'Figli per donna all'anno', font: { size: 10 } } },
-                    x: { title: { display: true, text: 'Età Biologica', font: { size: 10 } } }
-                }
-            }
-        });
+  document.getElementById('birthsLabel').textContent = fmtInt(birthsObserved);
+  document.getElementById('deathsLabel').textContent = fmtInt(deathsObserved);
+  document.getElementById('tfrLabel').textContent = fmtDec(tfrObserved,2);
+  document.getElementById('womenLabel').textContent = fmtDec(women/1e6,2) + ' M';
+  document.getElementById('scenarioTfrLabel').textContent = fmtDec(scenarioTfr,2);
 
-        // Grafico 2: Confronto Struttura Reale vs Uniforme
-        let realDist = getIstatWomenDistribution(totalWomen, maxAge);
-        let uniformValue = totalWomen / (maxAge - 15 + 1);
-        
-        let structureLabels = [];
-        let realData = [];
-        let uniformData = [];
-        
-        for (let a = 15; a <= maxAge; a += 2) {
-            structureLabels.push("Età " + a);
-            realData.push((realDist[a] || 0) / 1e6);
-            uniformData.push(uniformValue / 1e6);
-        }
+  const tfrSaldo0 = annualNaturalBalanceTFR(tfrObserved, birthsObserved, deathsObserved);
+  const repl = replacementTFR_NRR();
+  const gap = tfrSaldo0 - tfrObserved;
 
-        if (structureChart) structureChart.destroy();
-        let ctx2 = document.getElementById('structureCanvas').getContext('2d');
-        structureChart = new Chart(ctx2, {
-            type: 'bar',
-            data: {
-                labels: structureLabels,
-                datasets: [
-                    { label: 'Struttura Reale ISTAT (Milioni)', data: realData, backgroundColor: '#0f172a' },
-                    { label: 'Assunzione Uniforme Errata', data: uniformData, backgroundColor: '#cbd5e1' }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } } },
-                scales: {
-                    y: { title: { display: true, text: 'Popolazione (Milioni)', font: { size: 10 } } }
-                }
-            }
-        });
-    }
+  document.getElementById('balanceTfr').textContent = fmtDec(tfrSaldo0,2);
+  document.getElementById('balanceText').innerHTML = `Con ${fmtInt(birthsObserved)} nati e ${fmtInt(deathsObserved)} decessi, servirebbe un aumento di <strong>${fmtDec(gap,2)}</strong> figli/donna rispetto al TFR osservato.`;
+  document.getElementById('replacementTfr').textContent = fmtDec(repl,2);
+  document.getElementById('replacementText').textContent = 'Rimpiazzo generazionale NRR=1, indipendente dal numero di decessi dell’anno corrente e calcolato sulla quota femmine alla nascita e sopravvivenza fino all’età riproduttiva.';
+  document.getElementById('asfrTfrPill').textContent = fmtDec(observedTFRFromASFR(),2);
 
-    function calculateEverything() {
-        let totalWomen = parseFloat(document.getElementById('womenSlider').value) * 1e6;
-        let totalDeaths = parseFloat(document.getElementById('deathsSlider').value) * 1000;
-        let maxAge = parseInt(document.getElementById('maxAgeSlider').value);
-        let selectedModel = document.getElementById('modelSelect').value;
-        let currentTfr = parseFloat(document.getElementById('tfrSlider').value);
-        
-        // Update Labels
-        document.getElementById('womenLabel').innerText = (totalWomen / 1e6).toFixed(2);
-        document.getElementById('deathsLabel').innerText = (totalDeaths / 1000).toFixed(1);
-        document.getElementById('maxAgeLabel').innerText = maxAge;
-        document.getElementById('tfrCurrLabel').innerText = currentTfr.toFixed(2);
-        
-        let finalTfr = 0;
-        let infoText = "";
-        let modelTitle = "";
-        
-        if (selectedModel === "deterministic") {
-            finalTfr = runDeterministic(totalWomen, totalDeaths, maxAge);
-            modelTitle = "📐 Componenti di Coorte ISTAT";
-            infoText = "Modello deterministico statico. Calcola l'esatto moltiplicatore della fecondità necessario per compensare i decessi nell'anno in corso, tenendo conto dell'effettivo invecchiamento delle donne fertili.";
-        } else if (selectedModel === "leslie") {
-            finalTfr = runLeslieReplacement(totalWomen, totalDeaths, maxAge);
-            modelTitle = "🧬 Modello Matrice di Leslie / NRR";
-            infoText = "Modello dinamico di stabilizzazione generazionale di lungo periodo. Calcola il TFR strutturale necessario affinché ogni coorte rimpiazzi se stessa nel tempo. Tende stabilmente verso il valore biologico di rimpiazzo (~2.10).";
-        } else if (selectedModel === "montecarlo") {
-            let mcResult = runMonteCarlo(totalWomen, totalDeaths, maxAge);
-            finalTfr = mcResult.median;
-            modelTitle = "🎲 Simulazione Stocastica Monte Carlo";
-            infoText = `Analisi di robustezza probabilistica probabilizzata su 40.000 scenari stocastici. Intervallo di confidenza al 95% (Percentili 2.5% - 97.5%): [ ${mcResult.p2_5.toFixed(2)} — ${mcResult.p97_5.toFixed(2)} ]`;
-        }
-        
-        // Update Display
-        document.getElementById('requiredTfrDisplay').innerText = finalTfr.toFixed(2);
-        document.getElementById('modelTypeInfo').innerText = modelTitle;
-        document.getElementById('confidenceInfo').innerText = infoText;
-        
-        let delta = finalTfr - currentTfr;
-        let sign = delta >= 0 ? "+" : "";
-        let percent = ((delta / currentTfr) * 100).toFixed(0);
-        document.getElementById('deltaInfo').innerHTML = `<i class="bi bi-triangle-fill me-1"></i> Scostamento dal TFR attuale: ${sign}${delta.toFixed(2)} (${sign}${percent}%)`;
-        
-        drawCharts(totalWomen, maxAge);
-    }
+  document.getElementById('lowScenario').textContent = 'TFR saldo0 = ' + fmtDec(tfrSaldo0 * 0.95,2);
+  document.getElementById('midScenario').textContent = 'TFR saldo0 = ' + fmtDec(tfrSaldo0,2);
+  document.getElementById('highScenario').textContent = 'TFR saldo0 = ' + fmtDec(tfrSaldo0 * 1.05,2);
 
-    // Event listeners
-    ['womenSlider', 'deathsSlider', 'maxAgeSlider', 'tfrSlider'].forEach(id => {
-        document.getElementById(id).addEventListener('input', calculateEverything);
-    });
-    document.getElementById('modelSelect').addEventListener('change', calculateEverything);
-    document.getElementById('runBtn').addEventListener('click', calculateEverything);
+  const mode = selectedModelMode();
+  const mainLabel = document.getElementById('mainMetricLabel');
+  const mainValue = document.getElementById('mainMetricValue');
+  const mainText = document.getElementById('mainMetricText');
+  if(mode === 'balance'){
+    mainLabel.textContent = 'TFR necessario per saldo naturale zero';
+    mainValue.textContent = fmtDec(tfrSaldo0,2);
+    mainText.innerHTML = `Modello statico annuale: pareggia ${fmtInt(deathsObserved)} decessi con nascite equivalenti, dati i ${fmtInt(birthsObserved)} nati osservati.`;
+  } else if(mode === 'replacement'){
+    mainLabel.textContent = 'TFR di rimpiazzo generazionale';
+    mainValue.textContent = fmtDec(repl,2);
+    mainText.textContent = 'Modello NRR=1: sostituzione generazionale in assenza di migrazioni, non dipende dai decessi dell’anno corrente.';
+  } else {
+    mainLabel.textContent = 'Analisi di sensibilità deterministica';
+    mainValue.textContent = fmtDec(tfrSaldo0 * 0.95,2) + '–' + fmtDec(tfrSaldo0 * 1.05,2);
+    mainText.textContent = 'Intervallo non probabilistico: variazione ±5% del rapporto decessi/nati. Serve solo a vedere quanto il risultato cambia se i dati osservati oscillano.';
+  }
 
-    // Initial run
-    window.addEventListener('DOMContentLoaded', calculateEverything);
+  const rows = birthsByAgeGroup(women, scenarioTfr);
+  const totalScenarioBirths = rows.reduce((s,r)=>s+r.births,0);
+  const tbody = document.getElementById('asfrTable');
+  tbody.innerHTML = rows.map(r=>{
+    const quotaTfr = r.width * r.asfr;
+    return `<tr>
+      <td class="fw-bold">${r.label}</td>
+      <td>${fmtInt(r.women)}</td>
+      <td>${fmtDec(r.scaledAsfrPer1000,1)}</td>
+      <td>${fmtInt(r.births)}</td>
+      <td>${fmtDec(quotaTfr,3)}</td>
+    </tr>`;
+  }).join('') + `<tr class="table-light fw-bold"><td>Totale</td><td>${fmtInt(women)}</td><td>—</td><td>${fmtInt(totalScenarioBirths)}</td><td>${fmtDec(scenarioTfr,2)}</td></tr>`;
+
+  drawCharts(rows);
+}
+
+function drawCharts(rows){
+  const labels = rows.map(r=>r.label);
+  if(asfrChart) asfrChart.destroy();
+  asfrChart = new Chart(document.getElementById('asfrChart'),{
+    type:'bar',
+    data:{labels,datasets:[{label:'ASFR per 1.000 donne',data:rows.map(r=>r.scaledAsfrPer1000),backgroundColor:'#2563eb'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Nati per 1.000 donne/anno'}},x:{title:{display:true,text:'Classe d’età madre'}}}}
+  });
+  if(birthsChart) birthsChart.destroy();
+  birthsChart = new Chart(document.getElementById('birthsChart'),{
+    type:'doughnut',
+    data:{labels,datasets:[{label:'Nascite stimate',data:rows.map(r=>r.births),backgroundColor:['#bfdbfe','#93c5fd','#60a5fa','#2563eb','#1d4ed8','#1e40af','#172554']} ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:12,font:{size:11}}}}}
+  });
+}
+
+['births','deaths','tfr','women','scenarioTfr'].forEach(id=>document.getElementById(id).addEventListener('input',update));
+document.querySelectorAll('input[name="modelMode"]').forEach(el=>el.addEventListener('change',update));
+window.addEventListener('load',update);
 </script>
 </body>
 </html>
